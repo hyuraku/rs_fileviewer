@@ -8,19 +8,13 @@ use regex::Regex;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-
     let filename = &args[1];
-
-    let contents = match File::open(filename){
-        Err(why) => panic!("couldn't open {}: ", why),
-        Ok(file) => file,
-    };
-
-    let fivelines = io::BufReader::new(&contents).lines().into_iter().take(5);
+    let contents = File::open(filename).unwrap_or_else(|err| panic!("couldn't open {}: {}", filename, err));
+    let fivelines = io::BufReader::new(&contents).lines().take(5);
 
     for (index, line) in fivelines.enumerate() {
         if let Ok(line) = line {
-            println!("{}| {}", index+1, line);
+            println!("{}| {}", index + 1, line);
         }
     }
 
