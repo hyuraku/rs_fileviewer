@@ -20,10 +20,10 @@ fn main() {
 
     loop {
         print!("> ");
-        stdout().flush();
+        io::stdout().flush().unwrap();
 
         let mut input = String::new();
-        stdin().read_line(&mut input).unwrap();
+        io::stdin().read_line(&mut input).unwrap();
 
         let mut parts = input.trim().split_whitespace();
         let command = parts.next().unwrap();
@@ -31,12 +31,11 @@ fn main() {
 
         match command {
             "line" => {
-                let contents = match File::open(filename){
-                    Err(why) => panic!("couldn't open {}: ", why),
-                    Ok(file) => file,
-                };
+                let contents = File::open(filename).
+                    unwrap_or_else(
+                        |err| panic!("couldn't open {}: {}", filename, err)
+                    );
 
-                // let lines = io::BufReader::new(contents).lines().into_iter();
                 let lines = io::BufReader::new(contents).lines().into_iter();
 
                 let number_str = args.next().unwrap();
@@ -79,14 +78,9 @@ fn main() {
             "exit" => {
                 return
             },
-            command =>{
-                println!("put other command")
+            _ => {
+                println!("put other command");
             }
-
-
         }
-
-
     }
-
 }
